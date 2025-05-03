@@ -250,7 +250,7 @@ const MazeGenerator = () => {
       await downloadSingleImage(
         container,
         { maze: mazes[i], solution: solutions[i], start: starts[i], end: ends[i], index: i },
-        false 
+        true 
       )
     }
 
