@@ -197,23 +197,6 @@ class ExperimentsHandler:
 	def get_save_path_schdulers(self):
 		return f'{self.save_models_folder_path}/schedulers'
 
-	def save_model(self, model, scheduler, id):
-		model_path = f'{self.get_save_path_unet()}/unet-[{id}]'
-		scheduler_path = f'{self.get_save_path_schdulers()}/scheduler-[{id}]'
-
-		save(model.state_dict(), model_path)
-		scheduler.save_config(scheduler_path)
-
-	def save_plot(self, tosave, title, model_id):
-		path = f'{self.get_save_path_plot()}/{title}-[{model_id}].png'
-
-		plt.plot(tosave)
-		plt.title(title)
-		plt.savefig(path)
-
-		plt.clf()
-		plt.close()
-
 	def set_where_to_save(self, experiment_id):
 		self.save_paths = {
 			"plots": f'{self.get_save_path_unet()}', 
@@ -248,7 +231,24 @@ class ExperimentsHandler:
 			case 'DDPMs':
 				return DDPMScheduler(num_train_timesteps, beta_schedule=beta_schedule)
 			case _: 
-				return None
+				return ValueError(f'Unssported Scheduler: {name}')
+	
+	def save_model(self, model, scheduler, id):
+		model_path = f'{self.get_save_path_unet()}/unet-[{id}]'
+		scheduler_path = f'{self.get_save_path_schdulers()}/scheduler-[{id}]'
+
+		save(model.state_dict(), model_path)
+		scheduler.save_config(scheduler_path)
+
+	def save_plot(self, tosave, title, model_id):
+		path = f'{self.get_save_path_plot()}/{title}-[{model_id}].png'
+
+		plt.plot(tosave)
+		plt.title(title)
+		plt.savefig(path)
+
+		plt.clf()
+		plt.close()
 
 if __name__ == '__main__' :
 	config = {
