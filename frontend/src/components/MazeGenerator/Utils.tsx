@@ -1,3 +1,5 @@
+import cx from 'classnames'
+
 export type TPoint = { x: number, y: number }
 export type TMaze = Array<Array<number>>
 
@@ -28,6 +30,12 @@ const getUnvisitedNeighbors = (current: TPoint, maze: TMaze, step = 2) => {
   return neighbors;
 }
 
+
+const generateDumyMaze = (size: number) => {
+  const maze = Array(size).fill(null).map(() => Array(size).fill(1)) as TMaze;
+  
+  return maze
+}
 
 const generateMaze = (width: number, height: number, start: TPoint) => {
   const maze = Array(height).fill(null).map(() => Array(width).fill(0)) as TMaze;
@@ -126,8 +134,128 @@ const solveMaze = (maze: number[][], start: TPoint, end: TPoint) => {
   return path ;
 }
 
+const renderMaze = (
+  maze: TMaze,
+  solution: TPoint[],
+  start: TPoint,
+  end: TPoint,
+  options: {
+    showSolution: boolean
+  }
+) => {
+  const { showSolution = true } = options
+  return (
+    <div id="" className="flex flex-col space-y-2">
+      <div className="flex border-2">
+        {maze.map((mazeRow, i) => {
+          const row = mazeRow.map((mazeCell, j) => {
+            if (i === start.x && j === start.y) {
+              return (
+                <div
+                  key={`${i},${j}`}
+                  className={cx('w-5 h-5 text-center bg-blue-400')}
+                ></div>
+              );
+            }
+
+            if (i === end.x && j === end.y) {
+              return (
+                <div
+                  key={`${i},${j}`}
+                  className="w-5 h-5 text-center bg-red-400"
+                ></div>
+              );
+            }
+
+            if (showSolution && solution.find((p) => p.x === i && p.y === j)) {
+              return (
+                <div
+                  key={`${i},${j}`}
+                  className="w-5 h-5 text-center bg-green-300"
+                ></div>
+              );
+            }
+
+            if (mazeCell === 1) {
+              return (
+                <div
+                  key={`${i},${j}`}
+                  className="w-5 h-5 text-center bg-white"
+                ></div>
+              );
+            }
+
+            return (
+              <div
+                key={`${i},${j}`}
+                className={cx(
+                  'w-5 h-5 text-center border-black bg-black',
+                  {
+                    'border-t':
+                      j === 0 || (j - 1 >= 0 && maze[i][j - 1] === 1),
+                  },
+                  {
+                    'border-r': i + 1 < maze.length && maze[i + 1][j] === 1,
+                  },
+                  {
+                    'border-l': !!(i - 1 >= 0 && maze[i - 1][j] == 1),
+                  },
+                  {
+                    'border-b': j + 1 < maze[i].length && maze[i][j + 1] == 1,
+                  }
+                )}
+              ></div>
+            );
+          });
+
+          return (
+            <div key={i} className="flex flex-col">
+              {row}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
+
+const generateSingleMaze = (size: number) => {
+  const start = { x: 0, y: 0 };
+
+  const maze = generateMaze(size, size, start);
+
+  const filterMaze = maze
+    .reduce((prev, row, i) => {
+      const filterRow = row.reduce<TPoint[]>((p, cell, j) => {
+        if (cell === 1) {
+          p.push({ x: i, y: j });
+        }
+        return p;
+      }, []);
+
+      const _prev = prev.concat(filterRow);
+      return _prev;
+    }, [] as TPoint[])
+    .filter((p) => p.x !== start.x && p.y !== start.y);
+
+  const randomEnd = filterMaze[Math.floor(Math.random() * filterMaze.length)];
+  const randomStart =
+    filterMaze[Math.floor(Math.random() * filterMaze.length)];
+  const solution = solveMaze(maze, randomStart, randomEnd);
+
+  return {
+    maze,
+    solution,
+    start: randomStart,
+    end: randomEnd,
+  };
+};
+
 export {
+  generateSingleMaze,
+  generateDumyMaze,
   generateMaze,
   mazeToString,
+  renderMaze,
   solveMaze,
 }

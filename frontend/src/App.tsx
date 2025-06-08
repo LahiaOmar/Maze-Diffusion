@@ -1,5 +1,6 @@
 import './App.css'
 import MazeGenerator from './components/MazeGenerator'
+import MazeSolution from './components/MazeSolution'
 
 function App() {
   return (
@@ -9,7 +10,8 @@ function App() {
       </h1>
       <div className='flex items-center justify-center'>
         {/* maze generator */}
-        <MazeGenerator />
+        {/* <MazeGenerator /> */}
+        <MazeSolution />
       </div>
     </div>
   )
