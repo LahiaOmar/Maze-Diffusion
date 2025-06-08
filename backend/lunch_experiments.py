@@ -97,7 +97,6 @@ class ExperimentsHandler:
 			self.save_model(model_instance, scheduler_instance, experiment_id)
 			self.save_plot(losses, 'training', experiment_id)
 			self.save_plot(validation_scores, 'validation', experiment_id)
-			self.save_random_validations()
 			# save the result ////
 
 		self.save_result(result)
