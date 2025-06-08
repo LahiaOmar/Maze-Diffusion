@@ -92,7 +92,6 @@ class ExperimentsHandler:
 			experiment_id = create_uuid()
 			result[f'experiment_[{idx + 1}]'] = experiment_id
 
-			self.set_where_to_save(experiment)
 			model_instance, scheduler_instance, losses, validation_scores = self.start_experiment(experiment)
 
 			self.save_model(model_instance, scheduler_instance, experiment_id)
@@ -196,11 +195,6 @@ class ExperimentsHandler:
 
 	def get_save_path_schdulers(self):
 		return f'{self.save_models_folder_path}/schedulers'
-
-	def set_where_to_save(self, experiment_id):
-		self.save_paths = {
-			"plots": f'{self.get_save_path_unet()}', 
-		}
 	
 	def get_model(self, model):
 		_config = self.DEFAULT_CONFIG.get('model')
