@@ -1,0 +1,23 @@
+{
+  "experiments": [
+    {
+      "model": {
+        "name": "UNet",
+        "parameters": {
+          "simple_size": 28,
+          "embedding_num": 3,
+          "embedding_dim":28
+        }
+      },
+      "scheduler": {
+        "name": "DDPMs",
+        "timesteps": 500,
+        "beta_schedule": "linear"
+      },
+      "training": {
+        "epochs": 5,
+        "dataset_path": "./datasets"
+      }
+    }
+  ]
+}

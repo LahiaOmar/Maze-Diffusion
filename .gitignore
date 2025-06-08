@@ -1,1 +1,5 @@
 .DS_STORE
+/backend/mock
+/backend/datasets
+/backend/lab
+backend/__pycache__

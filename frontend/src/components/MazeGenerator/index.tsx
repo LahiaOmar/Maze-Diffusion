@@ -11,6 +11,7 @@ interface IMazeGenerated {
   size: number;
   nbMazes: number;
   solutions: TPoint[][];
+  downloadType: 'json' | 'images';
 }
 
 type TMazeInfo = Pick<IMazeGenerated, 'mazes' | 'solutions' | 'ends' | 'starts'> 
@@ -23,10 +24,11 @@ const MazeGenerator = () => {
     size: 10,
     nbMazes: 2,
     solutions: [],
+    downloadType: 'json',
   });
-  const { mazes, size, solutions, nbMazes, starts, ends } = generatedMaze;
+  const { mazes, size, solutions, nbMazes, starts, ends, downloadType } = generatedMaze;
 
-  const setMazeSizeChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const setMazeSizeChange = (e: ChangeEvent<HTMLInputElement>) => {    
     setGeneratedMaze((last) => ({
       ...last,
       size: +e.target.value,
@@ -73,6 +75,9 @@ const MazeGenerator = () => {
   };
 
   const generate = () => {
+
+    if(size <= 4) return
+
     const _newState: TMazeInfo = { mazes: [], solutions: [], starts: [], ends: []  }
 
     for (let i = 0; i < nbMazes; i++) {
@@ -209,7 +214,7 @@ const MazeGenerator = () => {
     ]
   };
 
-  const download = async () => {
+  const downloadImages = async () => {
     const mazeIDContainer = 'maze-dump-container'
 
     const downloadSingleImage = async (
@@ -253,8 +258,66 @@ const MazeGenerator = () => {
         true 
       )
     }
+  }
+  const downloadJSON = () => {
+    if(nbMazes){
+      const jsonArray = []
+      for (let i = 0 ; i < nbMazes; i++){
+        const current: any = {}
 
+        current['maze'] = mazes[i]
+        current['solution'] = mazes[i].map((row, ii) => {
+          return row.map((_, jj) => {
+            if(solutions[i].find(sol => sol.x === ii && sol.y === jj)){
+              return 1
+            }
+            
+            return 0
+          })
+        })
+
+        current['startAndEnd'] = mazes[i].map((row, ii) => {
+          return row.map((_, jj) => {
+            if(ii === starts[i].x && jj === starts[i].y){
+              return 1
+            }
+            else if(ii === ends[i].x && jj === ends[i].y){
+              return 1
+            }
+
+            return 0
+          })
+        })
+
+        jsonArray.push(current)
+      }
+
+      console.log({ jsonArray })
+
+      const jsonStr = JSON.stringify(jsonArray, null, 2)
+
+      const blob = new Blob([jsonStr], { type: "application/json"})
+      const url = URL.createObjectURL(blob)
+
+      const a = document.createElement('a')
+      a.href = url
+      a.download = 'mazes.json'
+      a.click()
+
+      URL.revokeObjectURL(url)
+    }
+  }
+
+  const download = async () => {
     
+    switch(downloadType){
+      case 'images': {
+        return downloadImages()
+      }
+      case 'json': {
+        return downloadJSON()
+      }
+    }
   };
 
   useEffect(() => {
@@ -276,7 +339,7 @@ const MazeGenerator = () => {
             Maze Size
           </label>
           <input
-            type="number"
+            type="text"
             id="maze-size"
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:border-gray-600 dark:placeholder-gray-400  dark:focus:ring-blue-500 dark:focus:border-blue-500"
             onChange={setMazeSizeChange}
@@ -292,7 +355,7 @@ const MazeGenerator = () => {
             Number of mazes
           </label>
           <input
-            type="number"
+            type="text"
             id="nb-mazes"
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
             onChange={setNumberOfMazesChange}
@@ -313,6 +376,20 @@ const MazeGenerator = () => {
           >
             DownLoad
           </button>
+        </div>
+        <div className=''>
+          <select value={downloadType} onChange={(e) => {
+            console.log({ value : e.target.value })
+            if(e.target.value){
+              setGeneratedMaze((last) => ({
+                ...last,
+                downloadType: e.target.value as IMazeGenerated['downloadType']
+              }))
+            }
+          }}>
+            <option value='json' >json</option>
+            <option value='images' >images</option>
+          </select>
         </div>
       </div>
       <div
