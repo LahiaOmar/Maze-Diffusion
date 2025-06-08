@@ -24,7 +24,7 @@ A simple web UI to:
 Train a diffusion model on the generated maze data.
 
 #### TODO:
-- [ ] Select an appropriate diffusion architecture (or implement from scratch)
-- [ ] Define training pipeline (dataset loader, scheduler, loss)
-- [ ] Evaluate model's ability to generalize to unseen mazes
+- [x] Select an appropriate diffusion architecture (or implement from scratch)
+- [x] Define training pipeline (dataset loader, scheduler, loss)
+- [x] Evaluate model's ability to generalize to unseen mazes
 
