@@ -7,4 +7,12 @@ export default defineConfig({
     react(),
     tailwindcss() 
   ],
+  server: {
+    proxy: {
+      '/solve': {
+        target: 'http://localhost:5000/api/',
+        changeOrigin: true,
+      }
+    }
+  }
 })
