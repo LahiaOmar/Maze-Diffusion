@@ -1,9 +1,6 @@
-from utils import read_json_file
 from flask import Flask, request, jsonify
 from inference import solution_inference
-# import matplotlib
-# matplotlib.use('Agg') 
-# import matplotlib.pyplot as plt
+from utils import read_json_file
 
 model_params_json_path = './model_touse_params.json'
 

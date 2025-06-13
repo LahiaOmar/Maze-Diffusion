@@ -1,6 +1,6 @@
 import torch
-from diffusers import DDPMScheduler
 from Models import ClassConditionedUnet
+from diffusers import DDPMScheduler
 
 device = 'mps'
 
