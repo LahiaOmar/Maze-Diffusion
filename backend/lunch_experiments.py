@@ -7,10 +7,9 @@ import matplotlib.pyplot as plt
 
 from tqdm import tqdm
 from torch.optim import Adam
-from diffusers import DDPMScheduler
-from Models import ClassConditionedUnet
+
 from torch.utils.data import DataLoader
-from utils import create_uuid, read_json_file
+from utils import create_uuid, read_json_file, get_model, get_scheduler
 from torch import nn, randn_like, randint, split, abs, no_grad, save
 
 def load_training_data(path):
@@ -42,9 +41,10 @@ def split_and_formatdata(data):
 	
 	total_length = len(dataset)
 	train_length = round((total_length / 100) * 90)
-
+	test_length = total_length - 10
+	
 	train_loader = DataLoader(dataset[:train_length], batch_size=20)
-	test_loader = DataLoader(dataset[train_length:], batch_size=20)
+	test_loader = DataLoader(dataset[test_length:], batch_size=20)
 
 	return (train_loader, test_loader)
 
@@ -92,11 +92,12 @@ class ExperimentsHandler:
 			experiment_id = create_uuid()
 			result[f'experiment_[{idx + 1}]'] = experiment_id
 
-			model_instance, scheduler_instance, losses, validation_scores = self.start_experiment(experiment)
+			model_instance, scheduler_instance, losses, validation_scores, random_validation_batch = self.start_experiment(experiment)
 
 			self.save_model(model_instance, scheduler_instance, experiment_id)
 			self.save_plot(losses, 'training', experiment_id)
 			self.save_plot(validation_scores, 'validation', experiment_id)
+			self.save_random_batch(random_validation_batch)
 			# save the result ////
 
 		self.save_result(result)
@@ -105,17 +106,44 @@ class ExperimentsHandler:
 		with open('./experiments_result.json', 'w') as f:
 			json.dump(result, f, indent=2)
 	
+	def save_random_batch(self, batch):
+		if not batch:
+			return
+		
+		preds = batch['prediction'].detach().cpu()
+		sols = batch['solution'].detach().cpu()
+
+		batch_size = min(preds.shape[0], 5)  # limit to max_items
+		fig, axes = plt.subplots(batch_size, 2, figsize=(4, 2 * batch_size))
+
+		if batch_size == 1:
+				axes = axes.reshape(1, 2)
+
+		for i in range(batch_size):
+				axes[i][0].imshow(preds[i, 0], cmap='gray')
+				axes[i][0].set_title('Prediction')
+				axes[i][0].axis('off')
+
+				axes[i][1].imshow(sols[i, 0], cmap='gray')
+				axes[i][1].set_title('Ground Truth')
+				axes[i][1].axis('off')
+
+		plt.tight_layout()
+		plt.savefig(f'{self.get_save_path_plot()}/validation_dump_images.png')
+		plt.close()
+
 	def start_experiment(self, experiment):
 		model = experiment['model']
 		scheduler = experiment['scheduler']
 		training = experiment['training']
+		use_validation = experiment['use_validation']
 
-		model_instance = self.get_model(model)
-		scheduler_instance = self.get_scheduler(scheduler)
+		model_instance = get_model(model)
+		scheduler_instance = get_scheduler(scheduler)
 		
-		return self.start_training_with(model=model_instance,scheduler=scheduler_instance, training=training)
+		return self.start_training_with(model=model_instance,scheduler=scheduler_instance, training=training, use_validation=use_validation)
 
-	def start_training_with(self, model, scheduler, training):
+	def start_training_with(self, model, scheduler, training, use_validation):
 		_config = self.DEFAULT_CONFIG['training']
 		dataset_path=training.get('dataset_path', _config.get('dataset_path'))
 		data = load_training_data(dataset_path)
@@ -132,6 +160,8 @@ class ExperimentsHandler:
 		opt = Adam(model.parameters(), lr=1e-3)
 		losses = []
 		validation_scores = []
+		random_validation_batch = {}
+		random_batch_idx = randint(0, len(val_dataloader), (1,)).item()
 
 		for epoch in tqdm(range(epochs), desc='TRAINING BLOCK.'):
 			print(f'epoch {epoch}')
@@ -148,7 +178,6 @@ class ExperimentsHandler:
 				
 				x0 = bs_solutions.int()
 
-
 				x0 = scheduler.add_noise(
 						original_samples=x0.float(), noise=bs_noise, timesteps=timesteps)
 				
@@ -163,25 +192,28 @@ class ExperimentsHandler:
 			losses.append(np.mean(epoch_losses, dtype=np.float64))
 		
 		# Validation Block.
-		for idx, x in tqdm(enumerate(val_dataloader), total=len(val_dataloader), desc='VALIDATION BLOCK'):
-			x = x.float().to(device)
-
-			bs_solutions, bs_mezes_conditions = split(x, 1, dim=1)
-			
-			xn = randn_like(bs_solutions.float()).to(device)
-
-			# Denoisoing step.
-			for __, t in enumerate(scheduler.timesteps):
-				with no_grad():
-					residual = model(xn, t, bs_mezes_conditions.int())
+		if use_validation:
+			for idx, x in tqdm(enumerate(val_dataloader), total=len(val_dataloader), desc='VALIDATION BLOCK'):
+				x = x.float().to(device)
+				bs_solutions, bs_mezes_conditions = split(x, 1, dim=1)
 				
-				xn = scheduler.step(residual, t, xn).prev_sample
+				xn = randn_like(bs_solutions.float()).to(device)
 
-			val_score = get_validation_score(xn, bs_solutions)
+				# Denoisoing step.
+				for __, t in enumerate(scheduler.timesteps):
+					with no_grad():
+						residual = model(xn, t, bs_mezes_conditions.int())
+					
+					xn = scheduler.step(residual, t, xn).prev_sample
 
-			validation_scores.append(val_score.cpu().item())
+				val_score = get_validation_score(xn, bs_solutions)
 
-		return model, scheduler, losses, validation_scores
+				validation_scores.append(val_score.cpu().item())
+
+				if idx == random_batch_idx :
+					random_validation_batch = { 'prediction': xn, 'solution': bs_solutions }
+
+		return model, scheduler, losses, validation_scores, random_validation_batch
 
 	def load_experiments(self, path):
 		return read_json_file(path)
@@ -194,38 +226,7 @@ class ExperimentsHandler:
 
 	def get_save_path_schdulers(self):
 		return f'{self.save_models_folder_path}/schedulers'
-	
-	def get_model(self, model):
-		_config = self.DEFAULT_CONFIG.get('model')
-		_config_parameters = _config.get('parameters')
-
-		name = model.get('name', _config.get('name'))
-		parameters = model.get('parameters', _config.get('parameters'))
-
-		match name:
-			case 'UNet':
-				simple_size = parameters.get('simple_size', _config_parameters.get('simple_size') )
-				embedding_num = parameters.get('embedding_num', _config_parameters.get('embedding_num') )
-				embedding_dim = parameters.get('embedding_dim', _config_parameters.get('embedding_dim') )
-				
-				return ClassConditionedUnet(simple_size=simple_size, embedding_size=embedding_dim, embedding_num=embedding_num)
-			case _:
-				return ValueError(f'Unssported model: {name}')
-
-	def get_scheduler(self,scheduler):
-		_config = self.DEFAULT_CONFIG.get('scheduler')
-
-		name = scheduler.get('name', _config.get('name'))
-		num_train_timesteps = scheduler.get('timesteps', _config.get('timesteps'))
-
-		beta_schedule = scheduler.get('beta_schedule', _config.get('beta_schedule'))
 		
-		match name:
-			case 'DDPMs':
-				return DDPMScheduler(num_train_timesteps, beta_schedule=beta_schedule)
-			case _: 
-				return ValueError(f'Unssported Scheduler: {name}')
-	
 	def save_model(self, model, scheduler, id):
 		model_path = f'{self.get_save_path_unet()}/unet-[{id}]'
 		scheduler_path = f'{self.get_save_path_schdulers()}/scheduler-[{id}]'

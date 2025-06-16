@@ -1,32 +1,29 @@
 import torch
-from Models import ClassConditionedUnet
-from diffusers import DDPMScheduler
+from utils import get_model, get_scheduler, get_path_saved_model
 
 device = 'mps'
 
-def get_model_and_schedule(embedding_num, embedding_size):
-  model = ClassConditionedUnet(embedding_num, embedding_size).to(device)
-  noise_scheduler = DDPMScheduler(num_train_timesteps=500)
-  
-  return model, noise_scheduler
+def solution_inference(model_params, model_id, maze, startAndEnd):
+  model_init = model_params['model']
+  scheduler_init = model_params['scheduler']
 
-def solution_inference(model_params, maze, startAndEnd):
-  embedding_num = model_params['embedding_num']
-  embedding_size = model_params['embedding_size']
+  model = get_model(model=model_init)
+  noise_scheduler = get_scheduler(scheduler=scheduler_init)
 
-  model, noise_scheduler = get_model_and_schedule(embedding_num, embedding_size)
+  model.to(device)
 
   t_maze = torch.tensor(maze)
   t_startAndEnd = torch.tensor(startAndEnd)
 
 
   condition = t_maze + t_startAndEnd
-  condition = condition.unsqueeze(0).unsqueeze(0).to('mps')
-  print(condition.shape)
+  condition = condition.unsqueeze(0).unsqueeze(0).to(device)
 
-  model.load_state_dict(torch.load('./maze_solution_diffusion-50-500', weights_only=True))
+  model_path = get_path_saved_model(model_id)
 
-  bs_noise = torch.randn_like(condition.float()).to('mps')
+  model.load_state_dict(torch.load(model_path, weights_only=True))
+
+  bs_noise = torch.randn_like(condition.float()).to(device)
   x0 = bs_noise
   
   model.eval()
