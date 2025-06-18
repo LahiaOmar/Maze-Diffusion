@@ -151,19 +151,21 @@ const renderMaze = (
           const row = mazeRow.map((mazeCell, j) => {
             if (i === start.x && j === start.y) {
               return (
-                <div
+                <span
+                  title='start'
                   key={`${i},${j}`}
-                  className={cx('w-5 h-5 text-center bg-blue-400')}
-                ></div>
+                  className={cx('w-4 h-4 text-center bg-blue-400')}
+                ></span>
               );
             }
 
             if (i === end.x && j === end.y) {
               return (
-                <div
+                <span 
+                  title='end'
                   key={`${i},${j}`}
-                  className="w-5 h-5 text-center bg-red-400"
-                ></div>
+                  className="cursor-pointer w-4 h-4 text-center bg-red-400"
+                ></span>
               );
             }
 
@@ -171,7 +173,7 @@ const renderMaze = (
               return (
                 <div
                   key={`${i},${j}`}
-                  className="w-5 h-5 text-center bg-green-300"
+                  className="w-4 h-4 text-center bg-green-300"
                 ></div>
               );
             }
@@ -180,7 +182,7 @@ const renderMaze = (
               return (
                 <div
                   key={`${i},${j}`}
-                  className="w-5 h-5 text-center bg-white"
+                  className="w-4 h-4 text-center bg-gray-100"
                 ></div>
               );
             }
@@ -189,7 +191,7 @@ const renderMaze = (
               <div
                 key={`${i},${j}`}
                 className={cx(
-                  'w-5 h-5 text-center border-black bg-black',
+                  'w-4 h-4 text-center border-black bg-black',
                   {
                     'border-t':
                       j === 0 || (j - 1 >= 0 && maze[i][j - 1] === 1),

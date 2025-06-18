@@ -5,8 +5,7 @@ import MazeSolution from './components/MazeSolution';
 
 function App() {
   return (
-    <div className="flex space-y-5 flex-col">
-      <h1 className="text-center text-3xl underline">Maze Diffusion Solver</h1>
+    <div className="flex space-y-5 flex-col h-screen bg-slate-100 p-10">
       <div className="flex items-center justify-center">
         <Routes>
           <Route path="/" element={<MazeSolution />} />

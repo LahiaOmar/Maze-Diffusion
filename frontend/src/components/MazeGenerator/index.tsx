@@ -174,8 +174,6 @@ const MazeGenerator = () => {
         jsonArray.push(current)
       }
 
-      console.log({ jsonArray })
-
       const jsonStr = JSON.stringify(jsonArray, null, 2)
 
       const blob = new Blob([jsonStr], { type: "application/json"})
@@ -261,7 +259,6 @@ const MazeGenerator = () => {
         </div>
         <div className=''>
           <select value={downloadType} onChange={(e) => {
-            console.log({ value : e.target.value })
             if(e.target.value){
               setGeneratedMaze((last) => ({
                 ...last,
