@@ -6,7 +6,7 @@
         "parameters": {
           "simple_size": 28,
           "embedding_num": 3,
-          "embedding_dim":28
+          "embedding_dim":784
         }
       },
       "scheduler": {
@@ -15,9 +15,10 @@
         "beta_schedule": "linear"
       },
       "training": {
-        "epochs": 5,
+        "epochs": 200,
         "dataset_path": "./datasets"
-      }
+      },
+      "use_validation": false
     }
   ]
 }
