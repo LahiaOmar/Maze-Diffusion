@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 from inference import solution_inference
 from utils import read_json_file
 import os
+import numpy as np
 
 experiments_file_path = './experiments.json'
 models_result_path = './experiments_result.json'
@@ -22,8 +23,11 @@ def solve_maze():
 
   maze_solution = solution_inference(model_params, model_id, maze, startAndEnd)
 
+  #basic classification.
+  solution_paths = np.argwhere(maze_solution > 0.9)
+
   result = {
-    'solution': maze_solution
+    'solution': solution_paths.tolist()
   }
     
   return jsonify(result), 200

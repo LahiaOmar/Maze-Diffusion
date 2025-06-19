@@ -35,6 +35,6 @@ def solution_inference(model_params, model_id, maze, startAndEnd):
       x0 = noise_scheduler.step(residual, t, x0).prev_sample
 
   solution_tensor = (x0).squeeze()
-  solution_list = solution_tensor.cpu().tolist()
+  solution_list = solution_tensor.cpu().numpy()
 
   return solution_list
