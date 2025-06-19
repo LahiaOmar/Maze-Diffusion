@@ -9,7 +9,7 @@ from tqdm import tqdm
 from torch.optim import Adam
 
 from torch.utils.data import DataLoader
-from utils import create_uuid, read_json_file, get_model, get_scheduler
+from utils import create_uuid, read_json_file, get_model, get_scheduler, get_torch_device
 from torch import nn, randn_like, randint, split, abs, no_grad, save
 
 def load_training_data(path):
@@ -153,7 +153,7 @@ class ExperimentsHandler:
 		epochs = training['epochs']
 
 		loss_fn = nn.MSELoss()
-		device = torch.device('cuda' if torch.cuda.is_available() else 'mps')
+		device = get_torch_device()
 
 		model = model.to(device)
 

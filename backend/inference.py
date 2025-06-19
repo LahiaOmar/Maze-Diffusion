@@ -1,7 +1,7 @@
 import torch
-from utils import get_model, get_scheduler, get_path_saved_model
+from utils import get_model, get_scheduler, get_path_saved_model, get_torch_device
 
-device = 'mps'
+device = get_torch_device()
 
 def solution_inference(model_params, model_id, maze, startAndEnd):
   model_init = model_params['model']

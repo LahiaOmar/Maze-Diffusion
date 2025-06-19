@@ -1,6 +1,7 @@
 import uuid
 import base64
 import json
+import torch
 from diffusers import DDPMScheduler
 from Models import ClassConditionedUnet
 import os
@@ -82,3 +83,12 @@ def get_path_saved_model(model_id):
 		return path
 	
 	return './maze_solution_diffusion-50-500'
+
+def get_torch_device():
+	device = 'cpu'
+	if torch.backends.mps.is_available():
+		device = "mps"
+	elif torch.cuda.is_available():
+		device = "cuda"
+	
+	return device
