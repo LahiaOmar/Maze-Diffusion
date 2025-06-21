@@ -25,6 +25,7 @@ const INIT_STATE: IMazeSolution = {
   size: 28,
   loadingResponse: false,
 };
+
 const MazeSolution = () => {
   const [state, setState] = useState<IMazeSolution>(INIT_STATE);
 
@@ -79,19 +80,15 @@ const MazeSolution = () => {
       const data = await response.json();
       if (data.solution) {
         const _solution = data.solution as Array<Array<number>>;
-        const keep: TPoint[] = [];
-
-        _solution.forEach((row, i) => {
-          row.forEach((cell, j) => {
-            if (cell >= 0.9) {
-              keep.push({ x: i, y: j });
-            }
-          });
+        const solutionPath: TPoint[] = [];
+        
+        _solution.forEach((path) => {
+          solutionPath.push({ x: path[0], y: path[1] });
         });
 
         setState((last) => ({
           ...last,
-          solution: keep,
+          solution: solutionPath,
         }));
       }
     }

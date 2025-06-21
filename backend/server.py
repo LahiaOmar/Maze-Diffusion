@@ -3,11 +3,13 @@ from inference import solution_inference
 from utils import read_json_file
 import os
 import numpy as np
+from flask_cors import CORS
 
 experiments_file_path = './experiments.json'
 models_result_path = './experiments_result.json'
 
 app = Flask(__name__)
+CORS(app)
 
 @app.route('/api/solve', methods=['POST'])
 def solve_maze():
@@ -32,6 +34,9 @@ def solve_maze():
     
   return jsonify(result), 200
 
+@app.route('/', methods=['GET'])
+def main():
+  return 'Hello Form Diffusion world 🌀'
 
 def load_model_init_parameters():
   params = read_json_file(experiments_file_path)
