@@ -4,9 +4,11 @@ from utils import read_json_file
 import os
 import numpy as np
 from flask_cors import CORS
+from pathlib import Path
 
-experiments_file_path = './experiments.json'
-models_result_path = './experiments_result.json'
+BASE_DIR = Path(__file__).resolve().parent
+experiments_file_path = Path.joinpath(BASE_DIR, './experiments.json') 
+models_result_path = Path.joinpath(BASE_DIR, './experiments_result.json')
 
 app = Flask(__name__)
 CORS(app)
