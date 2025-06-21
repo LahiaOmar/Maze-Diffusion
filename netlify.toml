@@ -1,0 +1,9 @@
+# netlify.toml
+[build]
+  base = "frontend"
+  publish = "dist"
+  command = "npm run build"
+
+# optional: environment variables for Vite
+[build.environment]
+  NODE_VERSION = "18"  # or whatever Node version you need
