@@ -5,6 +5,9 @@ import os
 import numpy as np
 from flask_cors import CORS
 from pathlib import Path
+from dotenv import load_dotenv
+
+load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent
 experiments_file_path = Path.joinpath(BASE_DIR, './experiments.json') 
@@ -46,7 +49,7 @@ def load_model_init_parameters():
 
   return params, models_ids
 
-if __name__ == '__main__':
+if __name__ == 'server':
   exp_params, models_ids = load_model_init_parameters()
   experiments = exp_params['experiments']
 
@@ -56,8 +59,7 @@ if __name__ == '__main__':
 
   model_id = models_ids[f'experiment_[{_id+1}]']
 
-  print(f'params {params} model_id {model_id}')
   app.config['model_params'] = params 
   app.config['model_id'] = model_id
 
-  app.run(host='0.0.0.0', port=5000, debug=True)
+  # app.run(host='0.0.0.0', port=5001, debug=True)
