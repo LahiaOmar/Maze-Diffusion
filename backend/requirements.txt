@@ -1,0 +1,7 @@
+diffusers==0.33.1
+Flask==3.1.1
+flask_cors==6.0.0
+matplotlib==3.10.3
+numpy==2.3.1
+torch==2.6.0
+tqdm==4.67.1
