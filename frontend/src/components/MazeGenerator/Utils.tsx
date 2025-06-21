@@ -140,10 +140,11 @@ const renderMaze = (
   start: TPoint,
   end: TPoint,
   options: {
-    showSolution: boolean
+    showSolution: boolean,
+    onPositionClick?: (i: number, j: number) => void
   }
 ) => {
-  const { showSolution = true } = options
+  const { showSolution = true, onPositionClick } = options
   return (
     <div id="" className="flex flex-col space-y-2">
       <div className="flex border-2">
@@ -182,7 +183,8 @@ const renderMaze = (
               return (
                 <div
                   key={`${i},${j}`}
-                  className="w-4 h-4 text-center bg-gray-100"
+                  className="w-4 h-4 text-center bg-gray-100 cursor-pointer"
+                  onClick={() => onPositionClick!(i, j)}
                 ></div>
               );
             }

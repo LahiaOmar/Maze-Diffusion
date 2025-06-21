@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   generateDumyMaze,
   generateSingleMaze,
@@ -28,6 +28,9 @@ const INIT_STATE: IMazeSolution = {
 
 const MazeSolution = () => {
   const [state, setState] = useState<IMazeSolution>(INIT_STATE);
+  const { maze, start, end, solution} = state
+
+  const lastPosition = useRef('s')
 
   const resetState = () => {
     setState(INIT_STATE);
@@ -52,7 +55,7 @@ const MazeSolution = () => {
   };
 
   const solveMaze = async () => {
-    setState((last) => ({ ...last, loadingResponse: true }));
+    setState((last) => ({ ...last, solution: null, loadingResponse: true }));
 
     if (state.maze && state.end && state.start) {
       // call server
@@ -96,11 +99,38 @@ const MazeSolution = () => {
     setState((last) => ({ ...last, loadingResponse: false }));
   };
 
+  const setLastPosition = () => {
+    lastPosition.current = lastPosition.current === 'e' ? 's' : 'e'
+  }
+
+  const handleOnPosition = (x: number, y: number) => {
+    const point: TPoint =  {x, y}
+
+    if(lastPosition.current === 's'){
+      setState((last) => ({
+        ...last,
+        start: point
+      }))
+    }
+
+    if(lastPosition.current === 'e'){
+      setState((last) => ({
+        ...last,
+        end: point
+      }))
+    }
+
+    setLastPosition()
+  }
+
   useEffect(() => {
     generateMaze();
   }, []);
 
-  return (
+  const shouldRenderMaze = !!(maze && start && end)
+  const haveSolution = !!solution
+
+  return (  
     <div className="flex space-x-4">
       <div className="flex flex-col space-y-4 mt-11">
         <div>
@@ -149,6 +179,13 @@ const MazeSolution = () => {
             </li>
           </ul>
         </div>
+        <div>
+          <h2 className="text-xl font-semibold mb-2">You can 🕹️ 🤩!! </h2>
+          <span>
+            Click on the path
+            <span className="inline-block w-4 h-4 bg-gray-100 border ml-1 mr-2" />
+            to change start/end position</span>
+        </div>
       </div>
       <div className='flex flex-col space-y-4'>
         <h1 className="text-center text-3xl">🌀 Maze-Diffusion</h1>
@@ -156,23 +193,22 @@ const MazeSolution = () => {
           <div className="">
             {
               // looks ugly!!!! TODO
-              state.maze &&
-                state.end &&
-                state.start &&
-                renderMaze(state.maze, [], state.start, state.end, {
+              shouldRenderMaze &&
+                renderMaze(maze, [], start, end, {
                   showSolution: false,
+                  onPositionClick: handleOnPosition 
                 })
             }
           </div>
           <div className="">
             {
               // looks ugly!!!! TODO
-              state.solution && state.maze && state.end && state.start
+              shouldRenderMaze && haveSolution
                 ? renderMaze(
-                    state.maze,
-                    state.solution,
-                    state.start,
-                    state.end,
+                    maze,
+                    solution,
+                    start,
+                    end,
                     {
                       showSolution: true,
                     }
@@ -182,7 +218,7 @@ const MazeSolution = () => {
                     [],
                     { x: -1, y: -1 },
                     { x: -1, y: -1 },
-                    { showSolution: false }
+                    { showSolution: false}
                   )
             }
           </div>
@@ -208,7 +244,7 @@ const MazeSolution = () => {
             )}
             onClick={solveMaze}
           >
-            {state.loadingResponse ? 'solving ...' : 'solve'}
+            {state.loadingResponse ? 'solving ... 🪄' : 'solve'}
           </button>
         </div>
       </div>
