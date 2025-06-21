@@ -11,6 +11,9 @@ from torch.optim import Adam
 from torch.utils.data import DataLoader
 from utils import create_uuid, read_json_file, get_model, get_scheduler, get_torch_device
 from torch import nn, randn_like, randint, split, abs, no_grad, save
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent
 
 def load_training_data(path):
 	data = []
@@ -55,7 +58,7 @@ def get_validation_score(pred, solution):
 class ExperimentsHandler:
 	def __init__(self, config):
 		self.experiemts_condig = config
-		self.save_models_folder_path = './savedModels'
+		self.save_models_folder_path = Path.joinpath(BASE_DIR, './savedModels')
 		self.DEFAULT_CONFIG = {
 			"model": {
 				"name": "UNet",
@@ -104,7 +107,8 @@ class ExperimentsHandler:
 		self.save_result(result)
 
 	def save_result(self, result):
-		with open('./experiments_result.json', 'w') as f:
+		path = Path.joinpath(BASE_DIR, './experiments_result.json')
+		with open(path, 'w') as f:
 			json.dump(result, f, indent=2)
 	
 	def save_random_batch(self, batch):
@@ -241,8 +245,9 @@ class ExperimentsHandler:
 		plt.close()
 
 if __name__ == '__main__' :
+	exp_path = Path.joinpath(BASE_DIR, './experiments.json')
 	config = {
-		"experiments_path" : './experiments.json'
+		"experiments_path" : exp_path
 	}
 
 	experimentHandler = ExperimentsHandler(config=config)
