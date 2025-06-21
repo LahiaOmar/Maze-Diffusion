@@ -5,6 +5,7 @@ import torch
 from diffusers import DDPMScheduler
 from Models import ClassConditionedUnet
 import os
+from pathlib import Path
 
 DEFAULT_CONFIG = {
 	"model": {
@@ -25,6 +26,8 @@ DEFAULT_CONFIG = {
 		"dataset_path": "./datasets"
 	}
 }
+
+BASE_DIR = Path(__file__).resolve().parent
 
 def create_uuid():
 	return base64.urlsafe_b64encode(uuid.uuid4().bytes).decode('utf-8').rstrip("=")
@@ -72,7 +75,7 @@ def get_scheduler(scheduler):
 
 
 def build_model_path(model_id):
-	return f'./savedModels/Unets/unet-[{model_id}]'
+	return Path.joinpath(BASE_DIR, f'./savedModels/Unets/unet-[{model_id}]')
 
 def get_path_saved_model(model_id):
 	path = build_model_path(model_id=model_id)
@@ -82,7 +85,7 @@ def get_path_saved_model(model_id):
 	if exit :
 		return path
 	
-	return './maze_solution_diffusion-50-500'
+	return  Path.joinpath(BASE_DIR, './maze_solution_diffusion-50-500')
 
 def get_torch_device():
 	device = 'cpu'
