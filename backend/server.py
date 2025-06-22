@@ -62,4 +62,4 @@ if __name__ == '__server__':
   app.config['model_params'] = params 
   app.config['model_id'] = model_id
 
-  # app.run(host='0.0.0.0', port=500)
+  app.run(host='0.0.0.0', port=5000)
