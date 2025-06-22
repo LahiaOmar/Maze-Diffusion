@@ -49,7 +49,7 @@ def load_model_init_parameters():
 
   return params, models_ids
 
-if __name__ == '__server__':
+if __name__ == 'server':
   exp_params, models_ids = load_model_init_parameters()
   experiments = exp_params['experiments']
 
@@ -61,5 +61,5 @@ if __name__ == '__server__':
 
   app.config['model_params'] = params 
   app.config['model_id'] = model_id
-
+  print('here')
   app.run(host='0.0.0.0', port=5000)
