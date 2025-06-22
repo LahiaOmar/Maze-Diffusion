@@ -21,7 +21,7 @@ def solution_inference(model_params, model_id, maze, startAndEnd):
 
   model_path = get_path_saved_model(model_id)
 
-  model.load_state_dict(torch.load(model_path, weights_only=True))
+  model.load_state_dict(torch.load(model_path, weights_only=True, map_location=device))
 
   bs_noise = torch.randn_like(condition.float()).to(device)
   x0 = bs_noise
