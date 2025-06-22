@@ -1,4 +1,4 @@
 # nixpacks.toml
 
 [start]
-cmd = "cd backend && gunicorn backend.main:app"
+cmd = "gunicorn backend.main:app"
