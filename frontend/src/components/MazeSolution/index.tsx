@@ -26,6 +26,8 @@ const INIT_STATE: IMazeSolution = {
   loadingResponse: false,
 };
 
+const API_URL = import.meta.env.VITE_API_URL || 'solve';
+
 const MazeSolution = () => {
   const [state, setState] = useState<IMazeSolution>(INIT_STATE);
   const { maze, start, end, solution} = state
@@ -59,7 +61,7 @@ const MazeSolution = () => {
 
     if (state.maze && state.end && state.start) {
       // call server
-      const response = await fetch('solve', {
+      const response = await fetch(API_URL, {
         method: 'POST',
         body: JSON.stringify({
           maze: state.maze,
