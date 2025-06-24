@@ -1,4 +1,0 @@
-# nixpacks.toml
-
-[start]
-cmd = "gunicorn backend.main:app"

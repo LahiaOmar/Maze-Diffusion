@@ -2,4 +2,7 @@
 /backend/mock
 /backend/datasets
 /backend/lab
+/backend/*.env*
 backend/__pycache__
+
+frontend/*.env*
