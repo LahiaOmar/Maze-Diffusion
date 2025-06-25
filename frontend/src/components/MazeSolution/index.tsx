@@ -15,6 +15,7 @@ interface IMazeSolution {
   end: TPoint | null;
   size: number;
   loadingResponse: boolean;
+  error: boolean;
 }
 
 const INIT_STATE: IMazeSolution = {
@@ -24,15 +25,16 @@ const INIT_STATE: IMazeSolution = {
   end: null,
   size: 28,
   loadingResponse: false,
+  error: false,
 };
 
 const API_URL = import.meta.env.VITE_API_URL || 'solve';
 
 const MazeSolution = () => {
   const [state, setState] = useState<IMazeSolution>(INIT_STATE);
-  const { maze, start, end, solution} = state
+  const { maze, start, end, solution } = state;
 
-  const lastPosition = useRef('s')
+  const lastPosition = useRef('s');
 
   const resetState = () => {
     setState(INIT_STATE);
@@ -59,82 +61,92 @@ const MazeSolution = () => {
   const solveMaze = async () => {
     setState((last) => ({ ...last, solution: null, loadingResponse: true }));
 
+    let error = false
     if (state.maze && state.end && state.start) {
-      // call server
-      const response = await fetch(API_URL, {
-        method: 'POST',
-        body: JSON.stringify({
-          maze: state.maze,
-          startAndEnd: state.maze.map((row, ii) => {
-            return row.map((_, jj) => {
-              if (ii === state.start?.x && jj === state.start.y) {
-                return 1;
-              } else if (ii === state.end?.x && jj === state.end.y) {
-                return 1;
-              }
+      try {
+        // call server
+        const response = await fetch(API_URL, {
+          method: 'POST',
+          body: JSON.stringify({
+            maze: state.maze,
+            startAndEnd: state.maze.map((row, ii) => {
+              return row.map((_, jj) => {
+                if (ii === state.start?.x && jj === state.start.y) {
+                  return 1;
+                } else if (ii === state.end?.x && jj === state.end.y) {
+                  return 1;
+                }
 
-              return 0;
-            });
+                return 0;
+              });
+            }),
           }),
-        }),
-        headers: {
-          'content-type': 'application/json',
-        },
-      });
-
-      const data = await response.json();
-      if (data.solution) {
-        const _solution = data.solution as Array<Array<number>>;
-        const solutionPath: TPoint[] = [];
-        
-        _solution.forEach((path) => {
-          solutionPath.push({ x: path[0], y: path[1] });
+          headers: {
+            'content-type': 'application/json',
+          },
         });
 
-        setState((last) => ({
-          ...last,
-          solution: solutionPath,
-        }));
+        const data = await response.json();
+        if (data.solution) {
+          const _solution = data.solution as Array<Array<number>>;
+          const solutionPath: TPoint[] = [];
+
+          _solution.forEach((path) => {
+            solutionPath.push({ x: path[0], y: path[1] });
+          });
+
+          setState((last) => ({
+            ...last,
+            solution: solutionPath,
+            error: false,
+            loadingResponse: false,
+          }));
+
+          return
+        }
+      } catch (ex) {
+        console.error(ex);
+        error = true
       }
     }
 
-    setState((last) => ({ ...last, loadingResponse: false }));
+    setState((last) => ({ ...last, loadingResponse: false, error }));
   };
 
   const setLastPosition = () => {
-    lastPosition.current = lastPosition.current === 'e' ? 's' : 'e'
-  }
+    lastPosition.current = lastPosition.current === 'e' ? 's' : 'e';
+  };
 
   const handleOnPosition = (x: number, y: number) => {
-    const point: TPoint =  {x, y}
+    const point: TPoint = { x, y };
 
-    if(lastPosition.current === 's'){
+    if (lastPosition.current === 's') {
       setState((last) => ({
         ...last,
         start: point,
         solution: null,
-      }))
+      }));
     }
 
-    if(lastPosition.current === 'e'){
+    if (lastPosition.current === 'e') {
       setState((last) => ({
         ...last,
         end: point,
-        solution: null
-      }))
+        solution: null,
+      }));
     }
 
-    setLastPosition()
-  }
+    setLastPosition();
+  };
 
   useEffect(() => {
     generateMaze();
   }, []);
 
-  const shouldRenderMaze = !!(maze && start && end)
-  const haveSolution = !!solution
+  const shouldRenderMaze = !!(maze && start && end);
+  const haveSolution = !!solution;
 
-  return (  
+  return (
     <div className="flex space-x-4">
       <div className="flex flex-col space-y-4 mt-11">
         <div>
@@ -197,10 +209,11 @@ const MazeSolution = () => {
           <span>
             Click on the path
             <span className="inline-block w-4 h-4 bg-gray-100 border ml-1 mr-2" />
-            to change start/end position</span>
+            to change start/end position
+          </span>
         </div>
       </div>
-      <div className='flex flex-col space-y-4'>
+      <div className="flex flex-col space-y-4 items-center justify-center">
         <h1 className="text-center text-3xl">🌀 Maze-Diffusion</h1>
         <div className="h-full flex items-center space-x-2">
           <div className="">
@@ -209,7 +222,7 @@ const MazeSolution = () => {
               shouldRenderMaze &&
                 renderMaze(maze, [], start, end, {
                   showSolution: false,
-                  onPositionClick: handleOnPosition 
+                  onPositionClick: handleOnPosition,
                 })
             }
           </div>
@@ -217,21 +230,15 @@ const MazeSolution = () => {
             {
               // looks ugly!!!! TODO
               shouldRenderMaze && haveSolution
-                ? renderMaze(
-                    maze,
-                    solution,
-                    start,
-                    end,
-                    {
-                      showSolution: true,
-                    }
-                  )
+                ? renderMaze(maze, solution, start, end, {
+                    showSolution: true,
+                  })
                 : renderMaze(
                     generateDumyMaze(state.size),
                     [],
                     { x: -1, y: -1 },
                     { x: -1, y: -1 },
-                    { showSolution: false}
+                    { showSolution: false }
                   )
             }
           </div>
@@ -260,6 +267,11 @@ const MazeSolution = () => {
             {state.loadingResponse ? 'solving ... 🪄' : 'solve'}
           </button>
         </div>
+        {
+          state.error && (
+            <span className='text-red-400 font-bold'>There is some server error 😢, refresh and try again 🫣</span>
+          )
+        }
       </div>
       {/* maze + solution */}
     </div>
