@@ -111,14 +111,16 @@ const MazeSolution = () => {
     if(lastPosition.current === 's'){
       setState((last) => ({
         ...last,
-        start: point
+        start: point,
+        solution: null,
       }))
     }
 
     if(lastPosition.current === 'e'){
       setState((last) => ({
         ...last,
-        end: point
+        end: point,
+        solution: null
       }))
     }
 
@@ -162,7 +164,10 @@ const MazeSolution = () => {
           <h2 className="text-xl font-semibold mb-2">Model Details</h2>
           <ul className="text-sm space-y-1">
             <li>
-              <strong>Model:</strong> Conditioned Unet
+              <strong>Model:</strong> Conditioned UNet2DModel (Thansk HF 🤗)
+            </li>
+            <li>
+              <strong>Conditioning:</strong> Maze + start_end
             </li>
             <li>
               <strong>Embeddings:</strong> 3
@@ -178,6 +183,12 @@ const MazeSolution = () => {
             </li>
             <li>
               <strong>out_channels:</strong> 1
+            </li>
+            <li>
+              <strong>Scheduler:</strong> DDPMScheduler (Thansk HF 🤗)
+            </li>
+            <li>
+              <strong>Scheduler timesteps: </strong> 500
             </li>
           </ul>
         </div>
