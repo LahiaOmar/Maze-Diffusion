@@ -7,7 +7,7 @@ const Footer = () => {
       <span>Built with Love-ffusion ❤️ 🌀</span>
       <div className="flex space-x-1">
         <a
-          href="https://github.com/lahiaomar"
+          href="https://github.com/LahiaOmar/Maze-Diffusion"
           className="hover:text-blue-500"
           target="_blank"
           rel="noopener noreferrer"
