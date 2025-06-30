@@ -7,3 +7,8 @@
 # optional: environment variables for Vite
 [build.environment]
   NODE_VERSION = "18"  # or whatever Node version you need
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
