@@ -7,6 +7,7 @@ import {
   TPoint,
 } from '../MazeGenerator/Utils';
 import cx from 'classnames';
+import SEO from '../SEO';
 
 interface IMazeSolution {
   maze: TMaze | null;
@@ -147,7 +148,14 @@ const MazeSolution = () => {
   const haveSolution = !!solution;
 
   return (
-    <div className="flex space-x-4">
+    <>
+      <SEO 
+        title="Maze Solver - AI-Powered Maze Solution with Diffusion Models"
+        description="Solve complex 2D mazes using advanced AI diffusion models. Generate mazes and watch as our trained U-Net model finds the optimal solution path using machine learning techniques."
+        keywords="maze solver, AI maze solution, diffusion models, pathfinding, machine learning maze solver, U-Net maze solving"
+        url="https://maze-diffusion.netlify.app/"
+      />
+      <div className="flex space-x-4">
       <div className="flex flex-col space-y-4 mt-11">
         <div>
           <h2 className="text-xl font-semibold mb-2">Maze Info</h2>
@@ -275,6 +283,7 @@ const MazeSolution = () => {
       </div>
       {/* maze + solution */}
     </div>
+    </>
   );
 };
 

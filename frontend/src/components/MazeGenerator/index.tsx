@@ -2,6 +2,7 @@ import { ChangeEvent, useEffect, useState } from 'react';
 import { renderMaze, TMaze, TPoint, generateSingleMaze } from './Utils';
 import html2canvas from 'html2canvas-pro';
 import { createRoot } from 'react-dom/client';
+import SEO from '../SEO';
 
 interface IMazeGenerated {
   mazes: TMaze[];
@@ -207,7 +208,14 @@ const MazeGenerator = () => {
   }, [size, nbMazes]);
 
   return (
-    <div className="space-y-4">
+    <>
+      <SEO 
+        title="Maze Dataset Generator - Create Training Data for AI Models"
+        description="Generate custom maze datasets for training AI models. Create multiple mazes with solutions, export as JSON or images, and build datasets for machine learning experiments."
+        keywords="maze dataset generator, AI training data, maze generation, machine learning dataset, maze solutions, training data creation"
+        url="https://maze-diffusion.netlify.app/dataset"
+      />
+      <div className="space-y-4">
       <h3 className="font-bold text-center">Preview Of A Random Maze</h3>
       <div className='flex flex-row space-x-2'>
         {mazes.length && mazePreview()}
@@ -276,6 +284,7 @@ const MazeGenerator = () => {
         }}
       />
     </div>
+    </>
   );
 };
 

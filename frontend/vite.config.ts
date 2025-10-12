@@ -19,5 +19,33 @@ export default defineConfig(({ mode }) => {
         },
       },
     },
+    build: {
+      // Optimize for Core Web Vitals
+      target: 'esnext',
+      minify: 'terser',
+      terserOptions: {
+        compress: {
+          drop_console: true,
+          drop_debugger: true,
+        },
+      },
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            vendor: ['react', 'react-dom'],
+            router: ['react-router'],
+            icons: ['react-icons'],
+          },
+        },
+      },
+      // Enable source maps for better debugging
+      sourcemap: mode === 'development',
+      // Optimize chunk size
+      chunkSizeWarningLimit: 1000,
+    },
+    // Optimize dependencies
+    optimizeDeps: {
+      include: ['react', 'react-dom', 'react-router', 'react-icons'],
+    },
   };
 });
