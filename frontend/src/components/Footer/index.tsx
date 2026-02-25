@@ -3,8 +3,8 @@ import { RiTwitterXFill } from 'react-icons/ri';
 
 const Footer = () => {
   return (
-    <div className="flex flex-col justify-center items-center space-y-2">
-      <span>Built with Love-ffusion ❤️ 🌀</span>
+    <div className="flex flex-col justify-center items-center space-y-2 py-2 shrink-0">
+      <span className="text-sm sm:text-base text-center">Built with Love-ffusion ❤️ 🌀</span>
       <div className="flex space-x-1">
         <a
           href="https://github.com/LahiaOmar/Maze-Diffusion"

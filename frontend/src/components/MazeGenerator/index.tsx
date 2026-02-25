@@ -207,13 +207,13 @@ const MazeGenerator = () => {
   }, [size, nbMazes]);
 
   return (
-    <div className="space-y-4">
-      <h3 className="font-bold text-center">Preview Of A Random Maze</h3>
-      <div className='flex flex-row space-x-2'>
+    <div className="space-y-4 w-full max-w-full">
+      <h3 className="font-bold text-center text-base sm:text-lg">Preview Of A Random Maze</h3>
+      <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 justify-center items-center">
         {mazes.length && mazePreview()}
       </div>
-      <div className="flex flex-col space-y-4 justify-center items-center">
-        <div className='w-sm'>
+      <div className="flex flex-col space-y-4 justify-center items-center w-full max-w-xs sm:max-w-sm mx-auto">
+        <div className="w-full">
           <label
             htmlFor="maze-size"
             className="block mb-2 text-sm font-medium text-black"
@@ -229,7 +229,7 @@ const MazeGenerator = () => {
             value={size}
           />
         </div>
-        <div className='w-sm'>
+        <div className="w-full">
           <label
             htmlFor="nb-mazes"
             className="block mb-2 text-sm font-medium text-black"
@@ -245,15 +245,15 @@ const MazeGenerator = () => {
             value={nbMazes}
           />
         </div>
-        <div className='flex flex-col'>
+        <div className="flex flex-col w-full">
           <button
-            className="w-sm text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+            className="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
             onClick={download}
           >
             DownLoad
           </button>
         </div>
-        <div className=''>
+        <div className="w-full">
           <select value={downloadType} onChange={(e) => {
             if(e.target.value){
               setGeneratedMaze((last) => ({

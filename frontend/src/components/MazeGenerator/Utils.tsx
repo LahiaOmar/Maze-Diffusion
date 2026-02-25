@@ -145,9 +145,10 @@ const renderMaze = (
   }
 ) => {
   const { showSolution = true, onPositionClick } = options
+  const cellClass = 'w-2 h-2 min-[480px]:w-3 min-[480px]:h-3 md:w-4 md:h-4 text-center'
   return (
-    <div id="" className="flex flex-col space-y-2">
-      <div className="flex border-2">
+    <div id="" className="flex flex-col space-y-2 max-w-full min-w-0">
+      <div className="flex border-2 w-fit">
         {maze.map((mazeRow, i) => {
           const row = mazeRow.map((mazeCell, j) => {
             if (i === start.x && j === start.y) {
@@ -155,7 +156,7 @@ const renderMaze = (
                 <span
                   title='start'
                   key={`${i},${j}`}
-                  className={cx('w-4 h-4 text-center bg-blue-400')}
+                  className={cx(cellClass, 'bg-blue-400')}
                 ></span>
               );
             }
@@ -165,7 +166,7 @@ const renderMaze = (
                 <span 
                   title='end'
                   key={`${i},${j}`}
-                  className="cursor-pointer w-4 h-4 text-center bg-red-400"
+                  className={cx('cursor-pointer', cellClass, 'bg-red-400')}
                 ></span>
               );
             }
@@ -174,7 +175,7 @@ const renderMaze = (
               return (
                 <div
                   key={`${i},${j}`}
-                  className="w-4 h-4 text-center bg-green-300"
+                  className={cx(cellClass, 'bg-green-300')}
                 ></div>
               );
             }
@@ -183,7 +184,7 @@ const renderMaze = (
               return (
                 <div
                   key={`${i},${j}`}
-                  className="w-4 h-4 text-center bg-gray-100 cursor-pointer"
+                  className={cx(cellClass, 'bg-gray-100 cursor-pointer')}
                   onClick={() => onPositionClick!(i, j)}
                 ></div>
               );
@@ -193,7 +194,8 @@ const renderMaze = (
               <div
                 key={`${i},${j}`}
                 className={cx(
-                  'w-4 h-4 text-center border-black bg-black',
+                  cellClass,
+                  'border-black bg-black',
                   {
                     'border-t':
                       j === 0 || (j - 1 >= 0 && maze[i][j - 1] === 1),

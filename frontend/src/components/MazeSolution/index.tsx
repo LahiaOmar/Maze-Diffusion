@@ -147,10 +147,10 @@ const MazeSolution = () => {
   const haveSolution = !!solution;
 
   return (
-    <div className="flex space-x-4">
-      <div className="flex flex-col space-y-4 mt-11">
+    <div className="flex flex-col lg:flex-row gap-4 lg:gap-6 w-full max-w-full min-h-0">
+      <div className="flex flex-col space-y-4 mt-4 lg:mt-11 shrink-0 order-2 lg:order-1">
         <div>
-          <h2 className="text-xl font-semibold mb-2">Maze Info</h2>
+          <h2 className="text-lg sm:text-xl font-semibold mb-2">Maze Info</h2>
           <ul className="space-y-1 text-sm">
             <li>
               <span className="inline-block w-4 h-4 bg-black mr-2" /> wall
@@ -173,7 +173,7 @@ const MazeSolution = () => {
           <p className="text-sm mt-2">Maze size: 28 × 28</p>
         </div>
         <div>
-          <h2 className="text-xl font-semibold mb-2">Model Details</h2>
+          <h2 className="text-lg sm:text-xl font-semibold mb-2">Model Details</h2>
           <ul className="text-sm space-y-1">
             <li>
               <strong>Model:</strong> Conditioned UNet2DModel (Thansk HF 🤗)
@@ -205,7 +205,7 @@ const MazeSolution = () => {
           </ul>
         </div>
         <div>
-          <h2 className="text-xl font-semibold mb-2">You can 🕹️ 🤩!! </h2>
+          <h2 className="text-lg sm:text-xl font-semibold mb-2">You can 🕹️ 🤩!! </h2>
           <span>
             Click on the path
             <span className="inline-block w-4 h-4 bg-gray-100 border ml-1 mr-2" />
@@ -213,12 +213,11 @@ const MazeSolution = () => {
           </span>
         </div>
       </div>
-      <div className="flex flex-col space-y-4 items-center justify-center">
-        <h1 className="text-center text-3xl">🌀 Maze-Diffusion</h1>
-        <div className="h-full flex items-center space-x-2">
-          <div className="">
+      <div className="flex flex-col space-y-4 items-center justify-center flex-1 min-w-0 order-1 lg:order-2">
+        <h1 className="text-center text-2xl sm:text-3xl">🌀 Maze-Diffusion</h1>
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4 w-full min-w-0">
+          <div className="flex justify-center">
             {
-              // looks ugly!!!! TODO
               shouldRenderMaze &&
                 renderMaze(maze, [], start, end, {
                   showSolution: false,
@@ -226,9 +225,8 @@ const MazeSolution = () => {
                 })
             }
           </div>
-          <div className="">
+          <div className="flex justify-center">
             {
-              // looks ugly!!!! TODO
               shouldRenderMaze && haveSolution
                 ? renderMaze(maze, solution, start, end, {
                     showSolution: true,
@@ -244,10 +242,10 @@ const MazeSolution = () => {
           </div>
         </div>
         {/* solve button */}
-        <div className="w-full flex justify-center items-center space-x-3.5">
+        <div className="w-full flex flex-wrap justify-center items-center gap-2 sm:gap-3.5">
           <button
             type="button"
-            className="text-white cursor-pointer bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+            className="text-white cursor-pointer bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 sm:px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
             onClick={generateMaze}
           >
             generate maze
@@ -257,7 +255,7 @@ const MazeSolution = () => {
             disabled={state.loadingResponse}
             type="button"
             className={cx(
-              'focus:outline-none text-white cursor-pointer bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800',
+              'focus:outline-none text-white cursor-pointer bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-4 sm:px-5 py-2.5 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800',
               {
                 'animate-pulse': state.loadingResponse,
               }
@@ -269,7 +267,7 @@ const MazeSolution = () => {
         </div>
         {
           state.error && (
-            <span className='text-red-400 font-bold'>There is some server error 😢, refresh and try again 🫣</span>
+            <span className='text-red-400 font-bold text-center text-sm sm:text-base'>There is some server error 😢, refresh and try again 🫣</span>
           )
         }
       </div>
