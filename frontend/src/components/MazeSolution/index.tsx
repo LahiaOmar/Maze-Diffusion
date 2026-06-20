@@ -265,6 +265,12 @@ const MazeSolution = () => {
             {state.loadingResponse ? 'solving ... 🪄' : 'solve'}
           </button>
         </div>
+        {state.loadingResponse && (
+          <p className="max-w-md text-center text-sm sm:text-base text-amber-800 bg-amber-50 border border-amber-200 rounded-lg px-4 py-3">
+            Hang tight — this usually takes ~40s. The model lives on a humble droplet
+            with one lonely CPU. It&apos;s doing its best. 🐢💭
+          </p>
+        )}
         {
           state.error && (
             <span className='text-red-400 font-bold text-center text-sm sm:text-base'>There is some server error 😢, refresh and try again 🫣</span>
