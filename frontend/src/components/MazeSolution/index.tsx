@@ -6,6 +6,7 @@ import {
   TMaze,
   TPoint,
 } from '../MazeGenerator/Utils';
+import DenoisingMaze from './DenoisingMaze';
 import cx from 'classnames';
 
 interface IMazeSolution {
@@ -33,7 +34,6 @@ const INIT_STATE: IMazeSolution = {
 };
 
 const API_URL = import.meta.env.VITE_API_URL || 'solve/stream';
-
 const parseSolutionCoords = (coords: Array<Array<number>>): TPoint[] =>
   coords.map((path) => ({ x: path[0], y: path[1] }));
 
@@ -339,20 +339,26 @@ const MazeSolution = () => {
                 })
             }
           </div>
-          <div className="flex justify-center">
-            {
-              showSolutionPanel
-                ? renderMaze(maze, solution ?? [], start, end, {
-                    showSolution: true,
-                  })
-                : renderMaze(
-                    generateDumyMaze(state.size),
-                    [],
-                    { x: -1, y: -1 },
-                    { x: -1, y: -1 },
-                    { showSolution: false }
-                  )
-            }
+          <div className="flex flex-col items-center justify-center">
+            {showSolutionPanel ? (
+              <DenoisingMaze
+                maze={maze}
+                solution={solution ?? []}
+                start={start}
+                end={end}
+                isDenoising={state.loadingResponse}
+                denoisingStep={state.denoisingStep}
+                denoisingTotal={state.denoisingTotal}
+              />
+            ) : (
+              renderMaze(
+                generateDumyMaze(state.size),
+                [],
+                { x: -1, y: -1 },
+                { x: -1, y: -1 },
+                { showSolution: false }
+              )
+            )}
           </div>
         </div>
         {/* solve button */}
