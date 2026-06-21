@@ -1,0 +1,32 @@
+backend/server.py
+  s_d7c14d3563dc24::t_2539a3c3c9b03c 74-102
+  s_d7c14d3563dc24::t_e94a7b025dca70 1,3
+frontend/vite.config.ts
+  s_d7c14d3563dc24::t_7eeda434b1b83b 10,19
+backend/inference.py
+  s_d7c14d3563dc24::t_3f220b793812aa 1,7-8,24,27-46,48-60,62-64,66,68
+frontend/src/components/MazeSolution/index.tsx
+  s_d7c14d3563dc24::t_ea2e75869bf575 384-389
+  s_d7c14d3563dc24::t_07196ad4b55ad4 99-104,107
+  s_d7c14d3563dc24::t_1701e56bd9a50f 130-141,143,165,168-170,172-184,186,190-191,193-194,196-199,202-204,206,210-218
+  s_d7c14d3563dc24::t_4896809693e744 19-20,31-32,35-92
+  s_d7c14d3563dc24::t_db3ee2d4177025 226,234-236,245-247,256
+  s_d7c14d3563dc24::t_5861a6b6cc2698 260-261
+  s_d7c14d3563dc24::t_6154fdd98c9468 344-345
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.9",
+  "base_commit_sha": "36febf390d24eefb01a254073b3bd5311e623c49",
+  "prompts": {},
+  "sessions": {
+    "s_d7c14d3563dc24": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "20d487d3-750d-4c4e-bc86-414a357fdd79",
+        "model": "default"
+      },
+      "human_author": "Omar Lahia <omar.lahia@4d.com>"
+    }
+  }
+}
