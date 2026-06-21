@@ -1,5 +1,6 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, Response, stream_with_context
 from utils import read_json_file
+import json
 import os
 import numpy as np
 from flask_cors import CORS
@@ -68,6 +69,35 @@ def solve_maze():
 
     solution_paths = np.argwhere(maze_solution > 0.9)
     return jsonify({"solution": solution_paths.tolist()}), 200
+
+
+@app.route("/api/solve/stream", methods=["POST"])
+def solve_maze_stream():
+    payload = request.get_json(silent=True)
+    if not payload:
+        return jsonify({"error": "Invalid data"}), 400
+
+    maze = payload["maze"]
+    startAndEnd = payload["startAndEnd"]
+
+    model_params = app.config["model_params"]
+    model_id = app.config["model_id"]
+
+    from inference import solution_inference_stream
+
+    def generate():
+        for frame in solution_inference_stream(model_params, model_id, maze, startAndEnd):
+            yield f"data: {json.dumps(frame)}\n\n"
+        yield f"data: {json.dumps({'done': True})}\n\n"
+
+    return Response(
+        stream_with_context(generate()),
+        mimetype="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "X-Accel-Buffering": "no",
+        },
+    )
 
 
 if __name__ == "__main__":
